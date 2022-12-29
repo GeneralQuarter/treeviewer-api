@@ -12,6 +12,7 @@ const getPlantsWithPosition = async (req: VercelRequest, res: VercelResponse) =>
     content_type: 'plant',
     limit: 1000,
     'fields.position[exists]': true,
+    'metadata.tags.sys.id[nin]': 'dead'
   });
 
   res.status(200).send(JSON.stringify(entryCollectionToPaginatedResult(entryCollection, entryToPlant)));
