@@ -1,11 +1,13 @@
-import { Entry, EntryFields } from 'contentful';
+import type { Entry, EntryFieldTypes, EntrySkeletonType } from 'contentful';
+import type { CoordsJsonArray } from './coords-json-array';
 
-export interface RectangleFields {
-  label: EntryFields.Symbol;
-  code: EntryFields.Symbol;
-  width: EntryFields.Number;
-  length: EntryFields.Number;
-  coords?: [lat: number, lon: number][];
+type RectangleFields = {
+  label: EntryFieldTypes.Symbol;
+  code: EntryFieldTypes.Symbol;
+  width: EntryFieldTypes.Number;
+  length: EntryFieldTypes.Number;
+  coords?: EntryFieldTypes.Object<CoordsJsonArray>;
 }
 
-export interface RectangleEntry extends Entry<RectangleFields> {}
+export type RectangleEntrySkeleton = EntrySkeletonType<RectangleFields, 'rectangle'>;
+export type RectangleEntry = Entry<RectangleEntrySkeleton, 'WITHOUT_UNRESOLVABLE_LINKS', 'fr'>;

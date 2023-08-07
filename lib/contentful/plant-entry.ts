@@ -1,11 +1,12 @@
-import { Entry, EntryFields } from 'contentful';
-import { PlantCommonInfoEntry } from './plant-common-info-entry';
+import type { Entry, EntryFieldTypes, EntrySkeletonType } from 'contentful';
+import type { PlantCommonInfoEntrySkeleton } from './plant-common-info-entry';
 
-export interface PlantFields {
-  commonInfo: PlantCommonInfoEntry;
-  code: EntryFields.Symbol;
-  sponsor: EntryFields.Symbol;
-  position?: {lat: number, lon: number};
+type PlantFields = {
+  commonInfo: EntryFieldTypes.EntryLink<PlantCommonInfoEntrySkeleton>;
+  code: EntryFieldTypes.Symbol;
+  sponsor: EntryFieldTypes.Symbol;
+  position?: EntryFieldTypes.Location;
 }
 
-export interface PlantEntry extends Entry<PlantFields> {}
+export type PlantEntrySkeleton = EntrySkeletonType<PlantFields, 'plant'>;
+export type PlantEntry = Entry<PlantEntrySkeleton, 'WITHOUT_UNRESOLVABLE_LINKS', 'fr'>;

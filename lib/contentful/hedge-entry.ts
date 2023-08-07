@@ -1,9 +1,12 @@
-import { Entry, EntryFields } from 'contentful';
-import { PlantEntry } from './plant-entry';
+import type { Entry, EntryFieldTypes, EntrySkeletonType } from 'contentful';
+import type { PlantEntrySkeleton } from './plant-entry';
+import type { CoordsJsonArray } from './coords-json-array';
 
-export interface HedgeFields {
-  name: EntryFields.Symbol,
-  plants: PlantEntry[];
+type HedgeFields = {
+  name: EntryFieldTypes.Symbol,
+  plants: EntryFieldTypes.Array<EntryFieldTypes.EntryLink<PlantEntrySkeleton>>;
+  coords: EntryFieldTypes.Object<CoordsJsonArray>;
 }
 
-export interface HedgeEntry extends Entry<HedgeFields> {}
+export type HedgeEntrySkeleton = EntrySkeletonType<HedgeFields, 'hedge'>;
+export type HedgeEntry = Entry<HedgeEntrySkeleton, 'WITHOUT_UNRESOLVABLE_LINKS', 'fr'>;

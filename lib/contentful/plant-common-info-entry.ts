@@ -1,14 +1,15 @@
-import { Entry, EntryFields } from 'contentful';
+import type { Entry, EntryFieldTypes, EntrySkeletonType } from 'contentful';
 
-export interface PlantCommonInfoFields {
-  genus: EntryFields.Symbol;
-  species: EntryFields.Symbol;
-  varietyCultivar: EntryFields.Symbol;
-  fullLatinName: EntryFields.Symbol;
-  commonName: EntryFields.Symbol;
-  width: EntryFields.Number;
-  height: EntryFields.Number;
-  sourceLinks: EntryFields.Symbol[];
+type PlantCommonInfoFields = {
+  genus: EntryFieldTypes.Symbol;
+  species: EntryFieldTypes.Symbol;
+  varietyCultivar: EntryFieldTypes.Symbol;
+  fullLatinName: EntryFieldTypes.Symbol;
+  commonName: EntryFieldTypes.Symbol;
+  width: EntryFieldTypes.Number;
+  height: EntryFieldTypes.Number;
+  sourceLinks: EntryFieldTypes.Array<EntryFieldTypes.Symbol>;
 }
 
-export interface PlantCommonInfoEntry extends Entry<PlantCommonInfoFields> {}
+export type PlantCommonInfoEntrySkeleton = EntrySkeletonType<PlantCommonInfoFields, 'PlantCommonInfo'>;
+export type PlantCommonInfoEntry = Entry<PlantCommonInfoEntrySkeleton, 'WITHOUT_UNRESOLVABLE_LINKS', 'fr'>;
