@@ -6,6 +6,7 @@ type HedgeFields = {
   name: EntryFieldTypes.Symbol,
   plants: EntryFieldTypes.Array<EntryFieldTypes.EntryLink<PlantEntrySkeleton>>;
   coords: EntryFieldTypes.Object<CoordsJsonArray>;
+  wateredAt: EntryFieldTypes.Date;
 }
 
 export type HedgeEntrySkeleton = EntrySkeletonType<HedgeFields, 'hedge'>;
