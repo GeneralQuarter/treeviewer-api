@@ -1,5 +1,3 @@
-import { Entry } from 'contentful';
-
 export interface Rectangle {
   id: string;
   label: string;
