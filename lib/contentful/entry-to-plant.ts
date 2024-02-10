@@ -15,6 +15,8 @@ export function entryToPlant(entry: PlantEntry): Plant {
       entry.fields.position.lon
     ] : [0, 0],
     sourceLinks: entry.fields.commonInfo?.fields.sourceLinks ?? [],
-    tags: entry.metadata.tags.map(l => l.sys.id).concat(entry.fields.commonInfo?.metadata.tags.map(t => t.sys.id) ?? [])
+    tags: entry.metadata.tags.map(l => l.sys.id).concat(entry.fields.commonInfo?.metadata.tags.map(t => t.sys.id) ?? []),
+    plantedAt: entry.fields.plantedAt,
+    declaredDeadAt: entry.fields.declaredDeadAt,
   }
 }
