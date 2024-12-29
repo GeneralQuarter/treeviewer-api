@@ -4,12 +4,16 @@ import withBasicAuth from '../../lib/with-basic-auth';
 import createCMAClient from '../../lib/contentful/create-cma-client';
 import type { PlainClientAPI } from 'contentful-management';
 
-const postDeadPlant = async (req: VercelRequest, res: VercelResponse) => {
-  if (req.method !== 'DELETE') {
+const allowedMethods = ['DELETE', 'PATCH'];
+
+const plantAction = async (req: VercelRequest, res: VercelResponse) => {
+  const method = req.method!;
+
+  if (!allowedMethods.includes(method)) {
     res.status(405).end();
     return;
   }
-  
+
   const { plantId } = req.query;
 
   if (typeof plantId !== 'string') {
@@ -19,18 +23,25 @@ const postDeadPlant = async (req: VercelRequest, res: VercelResponse) => {
 
   const client = createCMAClient();
 
-  await markPlantAsDead(client, plantId);
+  switch (method) {
+    case 'DELETE':
+      await updatePlantDateField(client, plantId, 'dead', 'declaredDeadAt');
+      break;
+    case 'PATCH':
+      await updatePlantDateField(client, plantId, 'planted', 'plantedAt');
+      break;
+  }
 
   res.status(204).end();
 }
 
-async function markPlantAsDead(client: PlainClientAPI, entryId: string) {
+async function updatePlantDateField(client: PlainClientAPI, entryId: string, tagId: string, dateField: string) {
   try {
     const entry = await client.entry.get({ entryId });
-    const declaredDeadAt = new Date().toISOString();
-    const deadTag = {
+    const dateAt = new Date().toISOString();
+    const tag = {
       sys: {
-        id: 'dead',
+        id: tagId,
         linkType: 'Tag',
         type: 'Link'
       }
@@ -41,12 +52,12 @@ async function markPlantAsDead(client: PlainClientAPI, entryId: string) {
         {
           op: 'add',
           path: '/metadata/tags/-',
-          value: deadTag
+          value: tag
         },
         {
-          op: entry.fields.declaredDeadAt ? 'replace' : 'add',
-          path: entry.fields.declaredDeadAt ? '/fields/declaredDeadAt/fr' : '/fields/declaredDeadAt',
-          value: entry.fields.declaredDeadAt ? declaredDeadAt : { fr: declaredDeadAt }
+          op: entry.fields[dateField] ? 'replace' : 'add',
+          path: entry.fields[dateField] ? `/fields/${dateField}/fr` : `/fields/${dateField}`,
+          value: entry.fields[dateField] ? dateAt : { fr: dateAt }
         }
       ]
     );
@@ -56,4 +67,4 @@ async function markPlantAsDead(client: PlainClientAPI, entryId: string) {
   }
 }
 
-export default withCors(withBasicAuth(postDeadPlant));
+export default withCors(withBasicAuth(plantAction));
