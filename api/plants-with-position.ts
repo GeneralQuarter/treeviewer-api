@@ -4,17 +4,31 @@ import { entryCollectionToPaginatedResult } from '../lib/contentful/entry-collec
 import { entryToPlant } from '../lib/contentful/entry-to-plant';
 import withCors from '../lib/with-cors';
 import { PlantEntrySkeleton } from '../lib/contentful/plant-entry';
+import { EntriesQueries } from 'contentful';
+
+const chunkSize = 1000;
 
 const getPlantsWithPosition = async (req: VercelRequest, res: VercelResponse) => {
   const client = createCDAClient();
 
-  const entryCollection = await client.withoutUnresolvableLinks.getEntries<PlantEntrySkeleton>({
+  const baseQuery: EntriesQueries<PlantEntrySkeleton, 'WITHOUT_UNRESOLVABLE_LINKS'> = {
     content_type: 'plant',
-    limit: 1000,
-    'fields.position[exists]': true,
-    // @ts-ignore
-    'metadata.tags.sys.id[nin]': 'dead'
-  });
+    limit: chunkSize,
+    'fields.position[exists]': true
+  };
+
+  const entryCollection = await client.withoutUnresolvableLinks.getEntries<PlantEntrySkeleton, 'fr'>(baseQuery);
+
+  const nbCalls = Math.ceil(entryCollection.total / chunkSize) - 1;
+
+  for (let i = 1; i <= nbCalls; i++) {
+    const chunkCollection = await client.withoutUnresolvableLinks.getEntries<PlantEntrySkeleton, 'fr'>({
+      ...baseQuery,
+      skip: i * chunkSize
+    });
+
+    entryCollection.items = entryCollection.items.concat(chunkCollection.items);
+  }
 
   res.status(200).send(JSON.stringify(entryCollectionToPaginatedResult(entryCollection, entryToPlant)));
 };
