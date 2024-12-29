@@ -13,6 +13,8 @@ const getPlantsWithPosition = async (req: VercelRequest, res: VercelResponse) =>
 
   const baseQuery: EntriesQueries<PlantEntrySkeleton, 'WITHOUT_UNRESOLVABLE_LINKS'> = {
     content_type: 'plant',
+    // @ts-ignore
+    'metadata.tags.sys.id[nin]': 'dead',
     limit: chunkSize,
     'fields.position[exists]': true
   };
