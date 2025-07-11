@@ -1,4 +1,3 @@
-
 import type { Hedge } from '../hedge';
 import type { HedgeEntry } from './hedge-entry';
 
@@ -8,5 +7,5 @@ export function entryToHedge(entry: HedgeEntry): Hedge {
     name: entry.fields.name,
     coords: entry.fields.coords,
     wateredAt: entry.fields.wateredAt,
-  }
+  };
 }

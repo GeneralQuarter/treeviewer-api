@@ -1,5 +1,5 @@
-import { Rectangle } from '../rectangle';
-import { RectangleEntry } from './rectangle-entry';
+import type { Rectangle } from '../rectangle';
+import type { RectangleEntry } from './rectangle-entry';
 
 export function entryToRectangle(entry: RectangleEntry): Rectangle {
   return {
@@ -8,6 +8,6 @@ export function entryToRectangle(entry: RectangleEntry): Rectangle {
     code: entry.fields.code,
     width: entry.fields.width,
     length: entry.fields.length,
-    coords: entry.fields.coords
+    coords: entry.fields.coords,
   };
 }

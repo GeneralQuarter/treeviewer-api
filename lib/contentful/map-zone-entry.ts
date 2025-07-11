@@ -5,7 +5,11 @@ type MapZoneFields = {
   name: EntryFieldTypes.Symbol;
   orientation: EntryFieldTypes.Symbol<'portrait' | 'landscape'>;
   coords: EntryFieldTypes.Object<CoordsJsonArray>;
-}
+};
 
 export type MapZoneEntrySkeleton = EntrySkeletonType<MapZoneFields, 'mapZone'>;
-export type MapZoneEntry = Entry<MapZoneEntrySkeleton, 'WITHOUT_UNRESOLVABLE_LINKS', 'fr'>;
+export type MapZoneEntry = Entry<
+  MapZoneEntrySkeleton,
+  'WITHOUT_UNRESOLVABLE_LINKS',
+  'fr'
+>;

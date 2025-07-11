@@ -1,15 +1,15 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import withCors from '../../lib/with-cors';
-import withBasicAuth from '../../lib/with-basic-auth';
-import createCMAClient from '../../lib/contentful/create-cma-client';
 import type { PlainClientAPI } from 'contentful-management';
+import createCMAClient from '../../lib/contentful/create-cma-client';
+import withBasicAuth from '../../lib/with-basic-auth';
+import withCors from '../../lib/with-cors';
 
 const allowedMethods = ['DELETE', 'PATCH'];
 
 const plantAction = async (req: VercelRequest, res: VercelResponse) => {
-  const method = req.method!;
+  const method = req.method;
 
-  if (!allowedMethods.includes(method)) {
+  if (!method || !allowedMethods.includes(method)) {
     res.status(405).end();
     return;
   }
@@ -33,9 +33,14 @@ const plantAction = async (req: VercelRequest, res: VercelResponse) => {
   }
 
   res.status(204).end();
-}
+};
 
-async function updatePlantDateField(client: PlainClientAPI, entryId: string, tagId: string, dateField: string) {
+async function updatePlantDateField(
+  client: PlainClientAPI,
+  entryId: string,
+  tagId: string,
+  dateField: string,
+) {
   try {
     const entry = await client.entry.get({ entryId });
     const dateAt = new Date().toISOString();
@@ -43,23 +48,25 @@ async function updatePlantDateField(client: PlainClientAPI, entryId: string, tag
       sys: {
         id: tagId,
         linkType: 'Tag',
-        type: 'Link'
-      }
+        type: 'Link',
+      },
     };
     const updatedEntry = await client.entry.patch(
-      { entryId, version: entry.sys.version }, 
+      { entryId, version: entry.sys.version },
       [
         {
           op: 'add',
           path: '/metadata/tags/-',
-          value: tag
+          value: tag,
         },
         {
           op: entry.fields[dateField] ? 'replace' : 'add',
-          path: entry.fields[dateField] ? `/fields/${dateField}/fr` : `/fields/${dateField}`,
-          value: entry.fields[dateField] ? dateAt : { fr: dateAt }
-        }
-      ]
+          path: entry.fields[dateField]
+            ? `/fields/${dateField}/fr`
+            : `/fields/${dateField}`,
+          value: entry.fields[dateField] ? dateAt : { fr: dateAt },
+        },
+      ],
     );
     return client.entry.publish({ entryId }, updatedEntry);
   } catch (e) {
